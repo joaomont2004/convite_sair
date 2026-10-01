@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Convite pra Carol 💌</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=DM+Sans:wght@400;600&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#ffe9ef;--card:#fffafb;--ink:#3a1230;--muted:#8b5a76;--accent:#d6245f;--on:#fff;--soft:#ffd3e1;--line:#f2b6cb}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#22101d;--card:#331727;--ink:#ffe9f1;--muted:#d49bb7;--accent:#ff5c93;--on:#2a0a1b;--soft:#4d2239;--line:#6b3350}}
+:root[data-theme="dark"]{--bg:#22101d;--card:#331727;--ink:#ffe9f1;--muted:#d49bb7;--accent:#ff5c93;--on:#2a0a1b;--soft:#4d2239;--line:#6b3350}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:100%;max-width:440px;background:var(--card);border:2px solid var(--line);border-radius:28px;padding:28px 22px;text-align:center;position:relative;overflow:hidden}
+h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:2.1rem;line-height:1.15;margin:8px 0 10px}
+h1 i{font-style:italic;color:var(--accent)}
+p{color:var(--muted);margin:0 0 18px;line-height:1.5}
+.big{font-size:3.4rem;line-height:1}
+.opts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:6px 0 20px}
+.opt{font:inherit;font-weight:600;color:var(--ink);background:var(--soft);border:2px solid transparent;border-radius:999px;padding:12px 18px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt.on{background:var(--accent);color:var(--on)}
+.btn{font:inherit;font-weight:600;background:var(--accent);color:var(--on);border:0;border-radius:999px;padding:14px 26px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.alt{background:var(--soft);color:var(--ink)}
+.row{position:relative;height:130px;display:flex;align-items:flex-start;justify-content:center;gap:14px}
+#no{position:absolute;transition:left .18s,top .18s}
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+.dots span{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--accent)}
+.sum{background:var(--soft);border-radius:18px;padding:14px 16px;text-align:left;margin:0 0 18px;line-height:1.7}
+.stack{display:flex;flex-direction:column;gap:10px;align-items:center}
+.conf{position:fixed;top:-30px;font-size:26px;pointer-events:none;animation:fall linear forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.conf{display:none}#no{transition:none}}
+</style>
+</head>
+<body>
+<main class="card" id="app"></main>
+<script>
+var S={step:0,passeio:"",hora:"",comida:[]};
+var PASSEIOS=["🎬 Cinema","🌳 Passeio no parque","☕ Café e conversa","🛍️ Shopping","🎲 Surpresa (deixa comigo)"];
+var HORAS=["13h","14h","15h","16h","17h"];
+var COMIDAS=["🍕 Pizza","🍔 Hambúrguer","🍣 Japonês","🍦 Sorvete","🍫 Doces","🥤 Açaí"];
+var NOS=["Não","Tem certeza?","Pensa de novo…","Sério?","Última chance!","Clica no outro 😅"],nc=0,yesScale=1;
+var app=document.getElementById("app");
+function dots(){var h='<div class="dots">';for(var i=1;i<=3;i++)h+='<span class="'+(S.step>=i?'on':'')+'"></span>';return h+'</div>'}
+function chips(list,key,multi){
+  return '<div class="opts">'+list.map(function(o){
+    var on=multi?S[key].indexOf(o)>-1:S[key]===o;
+    return '<button class="opt'+(on?' on':'')+'" data-k="'+key+'" data-v="'+o+'" aria-pressed="'+on+'">'+o+'</button>';
+  }).join('')+'</div>';
+}
+function render(){
+  var h="";
+  if(S.step===0){
+    h='<div class="big">💌</div><h1>Carol, quer sair comigo <i>sexta à tarde?</i></h1><p>Tem convite especial esperando por você.</p>'+
+      '<div class="row"><button class="btn" id="yes" style="transform:scale('+yesScale+');transform-origin:top right">Sim! 💖</button><button class="btn alt" id="no">'+NOS[nc%NOS.length]+'</button></div>';
+  }else if(S.step===1){
+    h=dots()+'<h1>Qual vai ser o <i>rolê?</i></h1>'+chips(PASSEIOS,'passeio',false)+'<button class="btn" data-go="2" '+(S.passeio?'':'disabled')+'>Próximo</button>';
+  }else if(S.step===2){
+    h=dots()+'<h1>A que <i>horas?</i></h1><p>Sexta-feira, de tarde.</p>'+chips(HORAS,'hora',false)+'<button class="btn" data-go="3" '+(S.hora?'':'disabled')+'>Próximo</button>';
+  }else if(S.step===3){
+    h=dots()+'<h1>E pra <i>comer?</i></h1><p>Pode escolher mais de uma.</p>'+chips(COMIDAS,'comida',true)+'<button class="btn" data-go="4" '+(S.comida.length?'':'disabled')+'>Finalizar</button>';
+  }else{
+    h='<div class="big">🥰</div><h1>Combinado!</h1><div class="sum"><b>Dia:</b> sexta-feira<br><b>Rolê:</b> '+S.passeio+'<br><b>Horário:</b> '+S.hora+'<br><b>Comer:</b> '+S.comida.join(', ')+'</div>'+
+      '<div class="stack"><a class="btn" id="wa" target="_blank" rel="noopener" href="'+wa()+'">Mandar resposta pelo WhatsApp</a><button class="btn alt" id="cp">Copiar resposta</button></div>';
+  }
+  app.innerHTML=h;
+}
+function msg(){return "Oi João! Aceito o convite 💖\nSexta-feira, de tarde\nRolê: "+S.passeio+"\nHorário: "+S.hora+"\nComer: "+S.comida.join(", ")}
+function wa(){return "https://wa.me/?text="+encodeURIComponent(msg())}
+function confetti(){
+  var e=["💖","🎉","✨","💕","🌸"];
+  for(var i=0;i<40;i++){var c=document.createElement("div");c.className="conf";c.textContent=e[i%e.length];
+    c.style.left=Math.random()*100+"vw";c.style.animationDuration=(2+Math.random()*2.5)+"s";c.style.animationDelay=(Math.random()*.8)+"s";
+    document.body.appendChild(c);setTimeout(function(x){x.remove()},6000,c)}
+}
+function dodge(){
+  var no=document.getElementById("no");if(!no)return;
+  nc++;yesScale=Math.min(yesScale+.12,1.7);
+  var row=no.parentNode,rw=row.clientWidth-no.offsetWidth,rh=row.clientHeight-no.offsetHeight;
+  no.textContent=NOS[nc%NOS.length];
+  no.style.left=Math.max(0,Math.random()*rw)+"px";no.style.top=Math.max(0,Math.random()*rh)+"px";
+  var y=document.getElementById("yes");if(y)y.style.transform="scale("+yesScale+")";
+}
+app.addEventListener("mouseover",function(e){if(e.target.id==="no")dodge()});
+app.addEventListener("touchstart",function(e){if(e.target.id==="no"){e.preventDefault();dodge()}},{passive:false});
+app.addEventListener("click",function(e){
+  var t=e.target;
+  if(t.id==="no"){dodge();return}
+  if(t.id==="yes"){S.step=1;confetti();render();return}
+  if(t.dataset.go){S.step=+t.dataset.go;if(S.step===4)confetti();render();return}
+  if(t.dataset.k){
+    var k=t.dataset.k,v=t.dataset.v;
+    if(k==="comida"){var i=S.comida.indexOf(v);i>-1?S.comida.splice(i,1):S.comida.push(v)}else S[k]=v;
+    render();return}
+  if(t.id==="cp"){
+    try{navigator.clipboard.writeText(msg()).then(function(){t.textContent="Copiado! ✅"},function(){t.textContent="Não deu pra copiar"})}catch(err){t.textContent="Não deu pra copiar"}
+  }
+});
+render();
+</script>
+</body>
+</html>
